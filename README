@@ -1,0 +1,27 @@
+pcspkr - listen to pcm sound over the internal pc speaker
+Written in 2014 by <Ahmet Inan> <xdsopl@googlemail.com>
+To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
+You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+Pulse Width Modulation (PWM) Method:
+# sox blah.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000
+
+Theory of operation:
+We abuse Timer Counter 2 at port 0x42 of the Programmable Interval Timer at port 0x43 in Mode 0 as a PWM to output PCM sound over the internal PC speaker.
+The nature of the equidistant starting pulses created by he PWM causes Harmonics, starting at the switching frequency.
+As the counter runs at a fixed frequency of 1193182 Hz, we need to trade duty cycle resolution to switching frequency.
+In addition to moving the switching frequency out of the hearing range, it is also good to have a bigger speaker with better low-pass characteristics to attenuate any remaining Harmonics.
+With some speakers it even makes sense to use a lower switching frequency, in the hearing range even, to get a better duty cycle resolution:
+# sox blah.ogg -t ub -c 1 -r 16000 - | sudo ./pwm 16000
+
+Pulse Density Modulation (PDM) Method:
+# sox blah.ogg -t ub -c 1 -r 1000000 - | sudo ./sdm
+
+Theory of operation:
+We abuse Speaker Data Enable Bit 1 at port 0x61 of the Keyboard Controller as an on/off switch for the PDM Method to output PCM sound over the internal PC speaker.
+Simply writing to port 0x61 delays almost exactly 1 microsecond, which gives us a switching frequency of around 1 MHz.
+We obtain the PDM by doing a Sigma Delta Modulation of the highly oversampled input signal.
+The nice thing with the PDM Method is, that due to the use of the Sigma Delta Modulation at high switching frequencies, the quantization noise is pushed out of the hearing range and, in contrast to the PWM Method, nicely distributed.
+Same as with the PWM Method, having a bigger speaker helps attenuating quantization and jitter noise.
+Please also read "Understanding PDM Digital Audio" by Thomas Kite.
+
