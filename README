@@ -25,3 +25,14 @@ The nice thing with the PDM Method is, that due to the use of the Sigma Delta Mo
 Same as with the PWM Method, having a bigger speaker helps attenuating quantization and jitter noise.
 Please also read "Understanding PDM Digital Audio" by Thomas Kite.
 
+Troubleshooting:
+If writing to port 0x61 delays a lot more or a lot less than 1 microsecond on your hardware, you should measure for the correct frequency:
+# sudo ./measure
+measured frequency: 977794 Hz
+measured frequency: 977947 Hz
+measured frequency: 977804 Hz
+measured frequency: 977840 Hz
+
+And put the average frequency as the output rate of sox:
+# sox blah.ogg -t ub -c 1 -r 977846 - | sudo ./sdm
+
