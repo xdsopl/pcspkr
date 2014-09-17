@@ -8,6 +8,14 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include <stdio.h>
 #include "pcspkr.h"
 
+int sigma_delta_modulation(int x)
+{
+	static int qe;
+	int y = x >= qe;
+	qe += 255 * y - x;
+	return y;
+}
+
 int main()
 {
 	set_io_permissions();

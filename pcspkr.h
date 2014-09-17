@@ -88,11 +88,3 @@ void set_realtime_scheduling()
 	sched_setscheduler(0, policy, &param);
 }
 
-int sigma_delta_modulation(int x)
-{
-	static int qe;
-	int y = x >= qe;
-	qe += 255 * y - x;
-	return y;
-}
-
