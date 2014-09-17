@@ -6,7 +6,21 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 */
 
 #include <stdio.h>
+#include <time.h>
 #include "pcspkr.h"
+
+void abs_nano_sleep(long nsec)
+{
+	static struct timespec ts;
+	if (!ts.tv_sec)
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+	ts.tv_nsec += nsec;
+	if (ts.tv_nsec >= 1000000000) {
+		ts.tv_nsec -= 1000000000;
+		ts.tv_sec++;
+	}
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, 0);
+}
 
 int main(int argc, char **argv)
 {

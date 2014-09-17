@@ -6,6 +6,7 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 */
 
 #include <stdio.h>
+#include <time.h>
 #include "pcspkr.h"
 
 void print_measured_frequency()
