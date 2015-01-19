@@ -1,6 +1,6 @@
 
 CFLAGS = -O3 -std=gnu99 -W -Wall
-LDFLAGS = -lrt
+LDLIBS = -lrt
 
 all: pwm sdm measure
 
