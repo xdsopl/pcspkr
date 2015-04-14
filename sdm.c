@@ -10,9 +10,15 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 int sigma_delta_modulation(int x)
 {
+#if 0
 	static int qe;
 	int y = x >= qe;
 	qe += 255 * y - x;
+#else
+	static int sum;
+	int y = sum > 0;
+	sum += x - 255 * y;
+#endif
 	return y;
 }
 
