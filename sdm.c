@@ -8,17 +8,26 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include <stdio.h>
 #include "pcspkr.h"
 
-int sigma_delta_modulation(int x)
+int sigma_delta_modulation(int x, int order)
 {
 	static int sum;
 	int y = sum >= 128;
 	int e = y << 8;
+	if (order >= 2) {
+		static int sum2;
+		sum2 += x - e;
+		x = sum2;
+	}
 	sum += x - e;
 	return y;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+	int order = 1;
+	if (argc == 2)
+		order = atoi(argv[1]);
+
 	set_io_permissions();
 	install_signal_handlers();
 	set_realtime_scheduling();
@@ -26,7 +35,7 @@ int main()
 
 	int c;
 	while (EOF != (c = getchar_unlocked()))
-		move_speaker(sigma_delta_modulation(c));
+		move_speaker(sigma_delta_modulation(c, order));
 
 	disable_speaker_and_counter();
 
