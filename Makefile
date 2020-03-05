@@ -10,7 +10,7 @@ test_pwm: pwm
 	sox bigben.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000
 
 test_sdm: sdm
-	sox bigben.ogg -t ub -c 1 -r 1000000 - | sudo ./sdm 1
+	sox bigben.ogg -t ub -c 1 -r $$((1000000/64)) - | sudo ./sdm 1
 
 test_measure: measure
 	sudo ./measure

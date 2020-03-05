@@ -22,6 +22,22 @@ int sigma_delta_modulation(int x, int order)
 	return y;
 }
 
+int integrator_cascade(int x)
+{
+	static int sum0, sum1, sum2;
+	return sum2 += (sum1 += (sum0 += x));
+}
+
+int comb_cascade(int x)
+{
+	static int prv2, prv1, prv0;
+	int tmp = x;
+	tmp -= prv0; prv0 = x; x = tmp;
+	tmp -= prv1; prv1 = x; x = tmp;
+	tmp -= prv2; prv2 = x; x = tmp;
+	return x;
+}
+
 int main(int argc, char **argv)
 {
 	int order = 1;
@@ -34,8 +50,14 @@ int main(int argc, char **argv)
 	prepare_hardware();
 
 	int c;
-	while (EOF != (c = getchar_unlocked()))
-		move_speaker(sigma_delta_modulation(c, order));
+	while (EOF != (c = getchar_unlocked())) {
+		int comb = comb_cascade(c);
+		for (int i = 0; i < 64; ++i) {
+			int intp = integrator_cascade(comb) >> 12;
+			comb = 0;
+			move_speaker(sigma_delta_modulation(intp, order));
+		}
+	}
 
 	disable_speaker_and_counter();
 

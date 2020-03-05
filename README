@@ -15,10 +15,10 @@ With some speakers it even makes sense to use a lower switching frequency, in th
 # sox blah.ogg -t ub -c 1 -r 16000 - | sudo ./pwm 16000
 
 Pulse Density Modulation (PDM) Method:
-# sox blah.ogg -t ub -c 1 -r 1000000 - | sudo ./sdm 1
+# sox blah.ogg -t ub -c 1 -r $((1000000/64)) - | sudo ./sdm 1
 
 PDM with second order noise shaping:
-# sox blah.ogg -t ub -c 1 -r 1000000 - | sudo ./sdm 2
+# sox blah.ogg -t ub -c 1 -r $((1000000/64)) - | sudo ./sdm 2
 
 Theory of operation:
 We abuse Speaker Data Enable Bit 1 at port 0x61 of the Keyboard Controller as an on/off switch for the PDM Method to output PCM sound over the internal PC speaker.
@@ -37,5 +37,5 @@ measured frequency: 977804 Hz
 measured frequency: 977840 Hz
 
 And put the average frequency as the output rate of sox:
-# sox blah.ogg -t ub -c 1 -r 977846 - | sudo ./sdm 1
+# sox blah.ogg -t ub -c 1 -r $((977846/64)) - | sudo ./sdm 1
 
