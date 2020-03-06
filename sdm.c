@@ -49,13 +49,12 @@ int main(int argc, char **argv)
 	set_realtime_scheduling();
 	prepare_hardware();
 
-	int c;
-	while (EOF != (c = getchar_unlocked())) {
-		int comb = comb_cascade(c);
+	for (short s; fread_unlocked(&s, 2, 1, stdin) == 1;) {
+		int comb = comb_cascade(s);
 		for (int i = 0; i < 64; ++i) {
-			int intp = integrator_cascade(comb) >> 12;
+			int intp = integrator_cascade(comb) >> 20;
 			comb = 0;
-			move_speaker(sigma_delta_modulation(intp, order));
+			move_speaker(sigma_delta_modulation(intp+128, order));
 		}
 	}
 
