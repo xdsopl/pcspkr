@@ -22,12 +22,31 @@ void abs_nano_sleep(long nsec)
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, 0);
 }
 
+int sigma_delta_modulation(int x, int cf, int sr, int order)
+{
+	static int sum;
+	if (!order)
+		sum = x;
+	int y = (sum * cf) / (sr * 256);
+	int e = (y * sr * 256) / cf;
+	if (order >= 2) {
+		static int sum2;
+		sum2 += x - e;
+		x = sum2;
+	}
+	sum += x - e;
+	return y;
+}
+
 int main(int argc, char **argv)
 {
-	if (argc != 2)
+	if (argc < 2 || argc > 3)
 		return 1;
 	const int counter_freq = 1193182;
 	const int sample_rate = atoi(argv[1]);
+	int order = 1;
+	if (argc == 3)
+		order = atoi(argv[2]);
 
 	set_io_permissions();
 	install_signal_handlers();
@@ -37,7 +56,7 @@ int main(int argc, char **argv)
 
 	int c;
 	while (EOF != (c = getchar_unlocked())) {
-		reset_counter((c * counter_freq) / (sample_rate * 256));
+		reset_counter(sigma_delta_modulation(c, counter_freq, sample_rate, order));
 		abs_nano_sleep(1000000000 / sample_rate);
 	}
 

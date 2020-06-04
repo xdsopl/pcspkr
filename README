@@ -6,6 +6,9 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 Pulse Width Modulation (PWM) Method:
 # sox blah.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000
 
+PWM with second order noise shaping:
+# sox blah.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000 2
+
 Theory of operation:
 We abuse Timer Counter 2 at port 0x42 of the Programmable Interval Timer at port 0x43 in Mode 0 as a PWM to output PCM sound over the internal PC speaker.
 The nature of the equidistant starting pulses created by he PWM causes Harmonics, starting at the switching frequency.
