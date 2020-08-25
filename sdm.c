@@ -8,12 +8,22 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 #include <stdio.h>
 #include "pcspkr.h"
 
-int sigma_delta_modulation(int x, int order)
+int noise()
+{
+	static int reg = 1;
+	int fb = reg >> 19;
+	reg <<= 1;
+	reg ^= fb * 1048585;
+	return fb;
+}
+
+int sigma_delta_modulation(int x, int order, int dither)
 {
 	static int sum;
 	if (!order)
 		sum = x;
-	int y = sum >= 128;
+	dither &= noise();
+	int y = sum >= dither;
 	int e = y << 8;
 	if (order >= 2) {
 		static int sum2;
@@ -43,8 +53,11 @@ int comb_cascade(int x)
 int main(int argc, char **argv)
 {
 	int order = 1;
-	if (argc == 2)
+	if (argc >= 2)
 		order = atoi(argv[1]);
+	int dither = 1;
+	if (argc == 3)
+		dither = atoi(argv[2]);
 
 	set_io_permissions();
 	install_signal_handlers();
@@ -56,7 +69,7 @@ int main(int argc, char **argv)
 		for (int i = 0; i < 64; ++i) {
 			int intp = integrator_cascade(comb) >> 20;
 			comb = 0;
-			move_speaker(sigma_delta_modulation(intp+128, order));
+			move_speaker(sigma_delta_modulation(intp+128, order, dither));
 		}
 	}
 
