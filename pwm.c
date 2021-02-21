@@ -22,13 +22,13 @@ void abs_nano_sleep(long nsec)
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &ts, 0);
 }
 
-int sigma_delta_modulation(int x, int cf, int sr, int order)
+int sigma_delta_modulation(int x, int order)
 {
 	static int sum;
 	if (!order)
 		sum = x;
-	int y = (sum * cf) / (sr * 256);
-	int e = (y * sr * 256) / cf;
+	int y = sum >> 2;
+	int e = y << 2;
 	if (order >= 2) {
 		static int sum2;
 		sum2 += x - e;
@@ -40,13 +40,11 @@ int sigma_delta_modulation(int x, int cf, int sr, int order)
 
 int main(int argc, char **argv)
 {
-	if (argc < 2 || argc > 3)
+	if (argc > 2)
 		return 1;
-	const int counter_freq = 1193182;
-	const int sample_rate = atoi(argv[1]);
 	int order = 1;
-	if (argc == 3)
-		order = atoi(argv[2]);
+	if (argc == 2)
+		order = atoi(argv[1]);
 
 	set_io_permissions();
 	install_signal_handlers();
@@ -56,8 +54,8 @@ int main(int argc, char **argv)
 
 	int c;
 	while (EOF != (c = getchar_unlocked())) {
-		reset_counter(sigma_delta_modulation(c, counter_freq, sample_rate, order));
-		abs_nano_sleep(1000000000 / sample_rate);
+		reset_counter(sigma_delta_modulation(c, order));
+		abs_nano_sleep(1000000000/(1193182/64));
 	}
 
 	disable_speaker_and_counter();

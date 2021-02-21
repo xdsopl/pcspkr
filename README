@@ -4,18 +4,16 @@ To the extent possible under law, the author(s) have dedicated all copyright and
 You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 Pulse Width Modulation (PWM) Method:
-# sox blah.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000
+# sox blah.ogg -t ub -c 1 -r 18643 - | sudo ./pwm
 
 PWM with second order noise shaping:
-# sox blah.ogg -t ub -c 1 -r 48000 - | sudo ./pwm 48000 2
+# sox blah.ogg -t ub -c 1 -r 18643 - | sudo ./pwm 2
 
 Theory of operation:
 We abuse Timer Counter 2 at port 0x42 of the Programmable Interval Timer at port 0x43 in Mode 0 as a PWM to output PCM sound over the internal PC speaker.
 The nature of the equidistant starting pulses created by he PWM causes Harmonics, starting at the switching frequency.
 As the counter runs at a fixed frequency of 1193182 Hz, we need to trade duty cycle resolution to switching frequency.
-In addition to moving the switching frequency out of the hearing range, it is also good to have a bigger speaker with better low-pass characteristics to attenuate any remaining Harmonics.
-With some speakers it even makes sense to use a lower switching frequency, in the hearing range even, to get a better duty cycle resolution:
-# sox blah.ogg -t ub -c 1 -r 16000 - | sudo ./pwm 16000
+It is good to have a bigger speaker with better low-pass characteristics to attenuate Harmonics.
 
 Pulse Density Modulation (PDM) Method:
 # sox blah.ogg -t s16 -c 1 -r $((1000000/64)) - | sudo ./sdm 1
