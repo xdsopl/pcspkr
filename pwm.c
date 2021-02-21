@@ -27,15 +27,15 @@ int sigma_delta_modulation(int x, int order)
 	static int sum;
 	if (!order)
 		sum = x;
-	int y = sum >> 2;
-	int e = y << 2;
+	int y = sum >> 10;
+	int e = y << 10;
 	if (order >= 2) {
 		static int sum2;
 		sum2 += x - e;
 		x = sum2;
 	}
 	sum += x - e;
-	return y;
+	return y + 32;
 }
 
 int main(int argc, char **argv)
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 	prepare_hardware();
 	enable_speaker_and_counter();
 
-	int c;
-	while (EOF != (c = getchar_unlocked())) {
-		reset_counter(sigma_delta_modulation(c, order));
+	short input;
+	while (fread_unlocked(&input, 2, 1, stdin) == 1) {
+		reset_counter(sigma_delta_modulation(input, order));
 		abs_nano_sleep(1000000000/(1193182/64));
 	}
 

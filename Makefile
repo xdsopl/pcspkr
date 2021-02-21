@@ -7,7 +7,7 @@ all: pwm sdm measure
 test: test_sdm test_pwm test_measure
 
 test_pwm: pwm
-	sox bigben.ogg -t ub -c 1 -r 18643 - | sudo ./pwm 1
+	sox bigben.ogg -t s16 -c 1 -r 18643 - | sudo ./pwm 1
 
 test_sdm: sdm
 	sox bigben.ogg -t s16 -c 1 -r $$((1000000/64)) - | sudo ./sdm 1
