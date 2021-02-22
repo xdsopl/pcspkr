@@ -10,13 +10,13 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 int sigma_delta_modulation(int x, int order)
 {
-	static int sum;
+	static short sum;
 	if (!order)
 		sum = x;
-	int y = sum >= 128;
+	int y = sum >= 0;
 	int e = y << 8;
 	if (order >= 2) {
-		static int sum2;
+		static short sum2;
 		sum2 += x - e;
 		x = sum2;
 	}
