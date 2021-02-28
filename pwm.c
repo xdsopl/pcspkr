@@ -27,15 +27,15 @@ int sigma_delta_modulation(int x, int order)
 	static int sum;
 	if (!order)
 		sum = x;
-	int y = sum >> 10;
-	int e = y << 10;
+	int y = sum >> 11;
+	int e = y << 11;
 	if (order >= 2) {
 		static int sum2;
 		sum2 += x - e;
 		x = sum2;
 	}
 	sum += x - e;
-	return y + 32;
+	return y + 16;
 }
 
 int main(int argc, char **argv)
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 	short input;
 	while (fread_unlocked(&input, 2, 1, stdin) == 1) {
 		int val = sigma_delta_modulation(input, order);
-		abs_nano_sleep(1000000000/(1193182/64));
+		abs_nano_sleep(1000000000/(1193182/32));
 		reset_counter(val);
 	}
 
