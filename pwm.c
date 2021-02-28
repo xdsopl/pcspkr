@@ -54,8 +54,9 @@ int main(int argc, char **argv)
 
 	short input;
 	while (fread_unlocked(&input, 2, 1, stdin) == 1) {
-		reset_counter(sigma_delta_modulation(input, order));
+		int val = sigma_delta_modulation(input, order);
 		abs_nano_sleep(1000000000/(1193182/64));
+		reset_counter(val);
 	}
 
 	disable_speaker_and_counter();
