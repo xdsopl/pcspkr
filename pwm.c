@@ -69,8 +69,9 @@ int main(int argc, char **argv)
 
 	int c;
 	while (EOF != (c = getchar_unlocked())) {
-		reset_counter(sigma_delta_modulation(c, counter_freq, sample_rate, order, dither));
+		int val = sigma_delta_modulation(c, counter_freq, sample_rate, order, dither);
 		abs_nano_sleep(1000000000 / sample_rate);
+		reset_counter(val);
 	}
 
 	disable_speaker_and_counter();
