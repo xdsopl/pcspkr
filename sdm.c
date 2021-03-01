@@ -10,13 +10,13 @@ You should have received a copy of the CC0 Public Domain Dedication along with t
 
 int sigma_delta_modulation(int x, int order)
 {
-	static short sum;
+	static int sum;
 	if (!order)
 		sum = x;
 	int y = sum >= 0;
-	int e = (y << 8) - (1 << 7);
+	int e = (y << 24) - (1 << 23);
 	if (order >= 2) {
-		static short sum2;
+		static int sum2;
 		sum2 += x - e;
 		x = sum2;
 	}
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 	for (short s; fread_unlocked(&s, 2, 1, stdin) == 1;) {
 		int comb = comb_cascade(s);
 		for (int i = 0; i < 64; ++i) {
-			int intp = integrator_cascade(comb) >> 20;
+			int intp = integrator_cascade(comb) >> 4;
 			comb = 0;
 			move_speaker(sigma_delta_modulation(intp, order));
 		}
