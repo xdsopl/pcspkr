@@ -14,7 +14,7 @@ int sigma_delta_modulation(int x, int order)
 	if (!order)
 		sum = x;
 	int y = sum >= 0;
-	int e = y << 8;
+	int e = (y << 8) - (1 << 7);
 	if (order >= 2) {
 		static short sum2;
 		sum2 += x - e;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 		for (int i = 0; i < 64; ++i) {
 			int intp = integrator_cascade(comb) >> 20;
 			comb = 0;
-			move_speaker(sigma_delta_modulation(intp+128, order));
+			move_speaker(sigma_delta_modulation(intp, order));
 		}
 	}
 
