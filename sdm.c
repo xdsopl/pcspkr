@@ -53,8 +53,8 @@ int main(int argc, char **argv)
 
 	for (short s; fread_unlocked(&s, 2, 1, stdin) == 1;) {
 		int comb = comb_cascade(s);
-		for (int i = 0; i < 32; ++i) {
-			int intp = integrator_cascade(comb) >> 2;
+		for (int i = 0; i < 16; ++i) {
+			int intp = integrator_cascade(comb);
 			comb = 0;
 			move_speaker(sigma_delta_modulation(intp, order));
 		}
